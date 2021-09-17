@@ -21,8 +21,6 @@ event_router = routers.NestedSimpleRouter(client_router, r'contract', lookup='co
 event_router.register(r'event', EventViewSet, basename='event')
 
 
-
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
