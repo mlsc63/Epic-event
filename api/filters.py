@@ -1,7 +1,5 @@
 from .models import Client
 import django_filters
-from django_filters import rest_framework as filters
-
 
 
 class ClientFilter(django_filters.FilterSet):
@@ -11,13 +9,12 @@ class ClientFilter(django_filters.FilterSet):
     email = django_filters.CharFilter(lookup_expr='iexact')
     phone = django_filters.CharFilter(lookup_expr='iexact')
     company_name = django_filters.CharFilter(lookup_expr='iexact')
-    date_created = django_filters.DateFilter(lookup_expr='iexact')
-    date_updated = django_filters.DateFilter(lookup_expr='iexact')
+    date_created = django_filters.NumberFilter(lookup_expr='year')
+    date_updated = django_filters.NumberFilter(lookup_expr='year')
     seller_contact = django_filters.CharFilter(lookup_expr='iexact')
 
-
-
     class Meta:
+        order_by_field = 'date_created',
         model = Client
         fields = ['first_name',
                   'last_name',
@@ -27,4 +24,4 @@ class ClientFilter(django_filters.FilterSet):
                   'date_created',
                   'date_updated',
                   'seller_contact',
-                  'sort_by']
+                  ]

@@ -37,6 +37,7 @@ class Contract(models.Model):
     amount = models.FloatField(null=True)
     created_time = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=10, choices=choice_status, default='UNSIGNED')
+    seller_contact = models.ForeignKey(to=Team, on_delete=models.CASCADE, related_name="contract_seller")
 
     def __str__(self):
         return "{}".format(self.title)

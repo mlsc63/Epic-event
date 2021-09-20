@@ -19,6 +19,7 @@ class ClientSerializer(serializers.ModelSerializer):
 
 
 class ContractSerializer(serializers.ModelSerializer):
+    seller_contact = serializers.ReadOnlyField(source='seller_contact.id')
     class Meta:
         model = Contract
         fields = ['id',
@@ -27,10 +28,13 @@ class ContractSerializer(serializers.ModelSerializer):
                   'detail_event',
                   'amount',
                   'created_time',
-                  'status']
+                  'status',
+                  'seller_contact']
 
 
 class EventSerializer(serializers.ModelSerializer):
+    contract = serializers.ReadOnlyField(source='contract.id')
+
     class Meta:
         model = Event
         fields = ['id',
