@@ -20,6 +20,7 @@ class ClientSerializer(serializers.ModelSerializer):
 
 class ContractSerializer(serializers.ModelSerializer):
     seller_contact = serializers.ReadOnlyField(source='seller_contact.id')
+
     class Meta:
         model = Contract
         fields = ['id',
@@ -35,6 +36,7 @@ class ContractSerializer(serializers.ModelSerializer):
 class EventSerializer(serializers.ModelSerializer):
     contract = serializers.ReadOnlyField(source='contract.id')
 
+
     class Meta:
         model = Event
         fields = ['id',
@@ -47,6 +49,13 @@ class EventSerializer(serializers.ModelSerializer):
                   'status',
                   'date_created']
 
+        extra_kwargs = {
+            'seller_contact': {'read_only': True},
+            'contract': {'read_only': True}
+        }
+
+
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -56,6 +65,9 @@ class UserSerializer(serializers.ModelSerializer):
                   'first_name',
                   'email',
                   'password']
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }
 
 
 class TeamSerializer(serializers.ModelSerializer):

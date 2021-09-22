@@ -36,3 +36,48 @@ class CreatorContract(permissions.BasePermission):
             return True
         else:
             return request.method in ["GET"]
+
+
+class CreatorEvent(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        team = Team.objects.get(user=request.user)
+        if team.role == 'MANAGER':
+            return True
+        else:
+            return request.method in ["GET", "DELETE", "PUT"]
+
+    def has_object_permission(self, request, view, obj):
+        team = Team.objects.get(user=request.user)
+        if team.role == 'MANAGER':
+            return True
+        elif obj.seller_contact == team:
+            print('ok')
+            return request.method in ["GET", "PUT"]
+        else:
+            return request.method in ["GET"]
+
+
+class CreatorUser(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        team = Team.objects.get(user=request.user)
+        if team.role == 'MANAGER':
+            return True
+        else:
+            return False
+
+    def has_object_permission(self, request, view, obj):
+        return True
+
+
+class CreatorTeam(permissions.BasePermission):
+    def has_permission(self, request, view):
+        team = Team.objects.get(user=request.user)
+        if team.role == 'MANAGER':
+            return True
+        else:
+            return False
+
+    def has_object_permission(self, request, view, obj):
+        return True
