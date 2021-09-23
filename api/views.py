@@ -47,7 +47,7 @@ class EventViewSet(viewsets.ModelViewSet):
     # on Initialise le serialisateur pour pouvoir mocker extra_kwargs,
     # et avoir l'instance de l'utilisateur pour savoir son status
     def get_serializer(self, *args, **kwargs):
-        #ini serializer
+
         serializer_class = EventSerializer
         user = Team.objects.get(user=self.request.user)
         if user.role == 'MANAGER':
@@ -74,8 +74,14 @@ class TeamViewSet(viewsets.ModelViewSet):
     queryset = Team.objects.all()
     serializer_class = TeamSerializer
 
+    def perform_create(self, serializer):
+        serializer.save()
+
 
 class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated & CreatorUser]
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+    def perform_create(self, serializer):
+        serializer.save()
