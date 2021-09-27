@@ -6,7 +6,7 @@ from .filters import ClientFilter, ContractFilter, EventFilter
 from django_filters import rest_framework as filters
 
 
-#
+
 class ClientViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated & CreatorClient]
     queryset = Client.objects.all()

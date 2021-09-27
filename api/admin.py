@@ -1,7 +1,12 @@
 from django.contrib import admin
 from .models import Client, Contract, Team, User, Event
-from django.core.exceptions import PermissionDenied
 from django.contrib import messages
+from rangefilter.filters import DateRangeFilter, DateTimeRangeFilter
+from .function_admin import custom_titled_filter, StatusContract, ContractSignedWithoutEvent
+
+
+admin.site.site_header = "Admin Portal"
+
 
 
 @admin.register(Client)
@@ -29,6 +34,7 @@ class ClientAdmin(admin.ModelAdmin):
     ]
 
     readonly_fields = ["date_created", "date_updated", "seller_contact"]
+    #list_filter = ("first_name", "last_name")
 
     def get_fieldsets(self, request, obj=None):
         try:
@@ -78,6 +84,7 @@ class ClientAdmin(admin.ModelAdmin):
 
 @admin.register(Contract)
 class ContractAdmin(admin.ModelAdmin):
+
     fieldsets = [
         (
             "Contract",
@@ -101,6 +108,18 @@ class ContractAdmin(admin.ModelAdmin):
     ]
 
     readonly_fields = ["created_time", "seller_contact"]
+    list_filter = (
+        ('client', custom_titled_filter('name of clients')),
+        ('created_time', DateRangeFilter),
+        StatusContract,
+
+    )
+
+
+
+    def get_rangefilter_created_time_title(self, request, field_path):
+        return 'Filter by creation date the contracts'
+
 
     def get_fieldsets(self, request, obj=None):
         try:
