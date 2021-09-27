@@ -3,9 +3,9 @@ from .models import Client, Contract, Team, User, Event
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 
+
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
-
     fieldsets = [
         (
             "Client",
@@ -37,8 +37,7 @@ class ClientAdmin(admin.ModelAdmin):
                 self.readonly_fields.remove('seller_contact')
                 return self.fieldsets
         except:
-           return self.fieldsets
-
+            return self.fieldsets
 
     def has_add_permission(self, request):
         return True
@@ -46,20 +45,20 @@ class ClientAdmin(admin.ModelAdmin):
     def has_module_permission(self, request):
         return True
 
-    #GET
+    # GET
     def has_view_permission(self, request, obj=None):
         return True
 
-    #PUT
+    # PUT
     def has_change_permission(self, request, obj=None):
         try:
             team = Team.objects.get(user=request.user)
             if team.role == 'MANAGER' or obj.seller_contact == team:
                 return True
         except:
-          return False
+            return False
 
-    #DELETE
+    # DELETE
     def has_delete_permission(self, request, obj=None):
         try:
             team = Team.objects.get(user=request.user)
@@ -67,7 +66,8 @@ class ClientAdmin(admin.ModelAdmin):
                 return True
         except:
             return False
-    #todo add foreingn key
+
+    # todo add foreingn key
 
     def save_model(self, request, obj, form, change):
         team = Team.objects.get(user=request.user)
@@ -76,10 +76,8 @@ class ClientAdmin(admin.ModelAdmin):
             obj.save()
 
 
-
 @admin.register(Contract)
 class ContractAdmin(admin.ModelAdmin):
-
     fieldsets = [
         (
             "Contract",
@@ -111,8 +109,7 @@ class ContractAdmin(admin.ModelAdmin):
                 self.readonly_fields.remove('seller_contact')
                 return self.fieldsets
         except:
-           return self.fieldsets
-
+            return self.fieldsets
 
     def has_add_permission(self, request):
         return True
@@ -120,11 +117,11 @@ class ContractAdmin(admin.ModelAdmin):
     def has_module_permission(self, request):
         return True
 
-    #GET
+    # GET
     def has_view_permission(self, request, obj=None):
         return True
 
-    #PUT
+    # PUT
     def has_change_permission(self, request, obj=None):
         try:
             team = Team.objects.get(user=request.user)
@@ -133,7 +130,7 @@ class ContractAdmin(admin.ModelAdmin):
         except:
             return False
 
-    #DELETE
+    # DELETE
     def has_delete_permission(self, request, obj=None):
         try:
             team = Team.objects.get(user=request.user)
@@ -152,17 +149,127 @@ class ContractAdmin(admin.ModelAdmin):
             return messages.error(request, "You can't")
 
 
-
-
-
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    pass
+    fieldsets = [
+        (
+            "Event",
+            {
+                "fields": [
+                    "title",
+                    "contract",
+                    "seller_contact",
+                    "location_event",
+                    "date_event",
+                    "description",
+                    "status",
+
+                ]
+            },
+        ),
+        (
+            "Dates",
+            {
+                "fields": ["date_created"],
+            },
+        ),
+    ]
+
+    readonly_fields = ["date_created", "seller_contact", "contract"]
+
+    def get_fieldsets(self, request, obj=None):
+        try:
+            team = Team.objects.get(user=request.user)
+            if team.role == 'MANAGER':
+                self.readonly_fields = ['date_created']
+            return self.fieldsets
+        except:
+            pass
+
+    def has_add_permission(self, request):
+        try:
+            team = Team.objects.get(user=request.user)
+            if team.role == 'MANAGER':
+                return True
+        except:
+            return False
+
+    def has_module_permission(self, request):
+        return True
+
+    # GET
+    def has_view_permission(self, request, obj=None):
+        return True
+
+    # PUT
+    def has_change_permission(self, request, obj=None):
+        try:
+            team = Team.objects.get(user=request.user)
+            if team.role == 'MANAGER' or obj.seller_contact == team:
+                return True
+        except:
+            return False
+
+    # DELETE
+    def has_delete_permission(self, request, obj=None):
+        try:
+            team = Team.objects.get(user=request.user)
+            if team.role == 'MANAGER' or obj.seller_contact == team:
+                return True
+        except:
+            return False
+
+    def save_model(self, request, obj, form, change):
+        try:
+            team = Team.objects.get(user=request.user)
+            if team.role == 'MANAGER':
+                obj.save()
+        except:
+            return messages.error(request, "You can't")
 
 
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
-    pass
+    fieldsets = [
+        (
+            "Team",
+            {
+                "fields": [
+                    "user",
+                    "role",
+                ]
+            },
+        ),
+
+    ]
+
+    def has_add_permission(self, request):
+        return True
+
+    def has_module_permission(self, request):
+        try:
+            team = Team.objects.get(user=request.user)
+            if team.role == 'MANAGER':
+                return True
+            else:
+                return False
+        except:
+            return False
+
+    # GET
+    def has_view_permission(self, request, obj=None):
+        return True
+
+    # PUT
+    def has_change_permission(self, request, obj=None):
+        return True
+
+    # DELETE
+    def has_delete_permission(self, request, obj=None):
+        return True
+
+    def save_model(self, request, obj, form, change):
+        obj.save()
 
 
 @admin.register(User)
