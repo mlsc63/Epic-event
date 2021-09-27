@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import Client, Contract, Team, User, Event
 from django.contrib import messages
 from rangefilter.filters import DateRangeFilter, DateTimeRangeFilter
-from .function_admin import custom_titled_filter, StatusContract, ContractSignedWithoutEvent
+from .function_admin import custom_titled_filter, StatusContract, StatusEvent, RoleUser
 
 
 admin.site.site_header = "Admin Portal"
@@ -34,7 +34,13 @@ class ClientAdmin(admin.ModelAdmin):
     ]
 
     readonly_fields = ["date_created", "date_updated", "seller_contact"]
-    #list_filter = ("first_name", "last_name")
+    list_filter = (
+        ('company_name', custom_titled_filter('name of company')),
+        ('date_created', DateRangeFilter),
+    )
+
+    def get_rangefilter_created_time_title(self, request, field_path):
+        return 'Filter by creation date the contracts'
 
     def get_fieldsets(self, request, obj=None):
         try:
@@ -195,6 +201,19 @@ class EventAdmin(admin.ModelAdmin):
     ]
 
     readonly_fields = ["date_created", "seller_contact", "contract"]
+    list_filter = (
+
+        ('contract__client', custom_titled_filter('name of clients')),
+        ('contract', custom_titled_filter('name of contracts')),
+
+        ('date_created', DateRangeFilter),
+        StatusEvent,
+
+
+    )
+
+    def get_rangefilter_created_time_title(self, request, field_path):
+        return 'Filter by creation date the event'
 
     def get_fieldsets(self, request, obj=None):
         try:
@@ -261,6 +280,10 @@ class TeamAdmin(admin.ModelAdmin):
         ),
 
     ]
+    list_filter = (
+        ('user__username', custom_titled_filter('name')),
+        RoleUser,
+    )
 
     def has_add_permission(self, request):
         return True
