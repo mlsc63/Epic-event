@@ -10,7 +10,6 @@ logger = logging.getLogger(__name__)
 admin.site.site_header = "Admin Portal"
 
 
-
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
     fieldsets = [
@@ -81,8 +80,6 @@ class ClientAdmin(admin.ModelAdmin):
         except:
             return False
 
-    # todo add foreingn key
-
     def save_model(self, request, obj, form, change):
         try:
             team = Team.objects.get(user=request.user)
@@ -95,7 +92,6 @@ class ClientAdmin(admin.ModelAdmin):
 
 @admin.register(Contract)
 class ContractAdmin(admin.ModelAdmin):
-
     fieldsets = [
         (
             "Contract",
@@ -126,11 +122,8 @@ class ContractAdmin(admin.ModelAdmin):
 
     )
 
-
-
     def get_rangefilter_created_time_title(self, request, field_path):
         return 'Filter by creation date the contracts'
-
 
     def get_fieldsets(self, request, obj=None):
         try:
@@ -213,7 +206,6 @@ class EventAdmin(admin.ModelAdmin):
 
         ('date_created', DateRangeFilter),
         StatusEvent,
-
 
     )
 

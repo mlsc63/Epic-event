@@ -78,9 +78,9 @@ WSGI_APPLICATION = 'EpicEvent.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'epic',
+        'NAME': '****',
         'USER': 'postgres',
-        'PASSWORD': 'Mopase63',
+        'PASSWORD': '*****',
         'HOST': '127.0.0.1'
     }
 }

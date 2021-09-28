@@ -52,7 +52,6 @@ class CreatorEvent(permissions.BasePermission):
         if team.role == 'MANAGER':
             return True
         elif obj.seller_contact == team:
-            print('ok')
             return request.method in ["GET", "PUT"]
         else:
             return request.method in ["GET"]
