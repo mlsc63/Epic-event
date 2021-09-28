@@ -4,8 +4,9 @@ from .serializers import TeamSerializer, ClientSerializer, ContractSerializer, E
 from .permissions import CreatorClient, CreatorContract, CreatorEvent, CreatorUser, CreatorTeam
 from .filters import ClientFilter, ContractFilter, EventFilter
 from django_filters import rest_framework as filters
+import logging
 
-
+logger = logging.getLogger(__name__)
 
 class ClientViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated & CreatorClient]
@@ -16,8 +17,11 @@ class ClientViewSet(viewsets.ModelViewSet):
     filterset_class = ClientFilter
 
     def perform_create(self, serializer):
-        team = Team.objects.get(user=self.request.user)
-        serializer.save(seller_contact=team)
+        try:
+            team = Team.objects.get(user=self.request.user)
+            serializer.save(seller_contact=team)
+        except:
+            logger.error('Something went wrong!')
 
 
 class ContractViewSet(viewsets.ModelViewSet):
@@ -29,12 +33,18 @@ class ContractViewSet(viewsets.ModelViewSet):
     filterset_class = ContractFilter
 
     def get_queryset(self, *args, **kwargs):
-        client = self.kwargs.get('client_pk')
-        return Contract.objects.filter(client=client)
+        try:
+            client = self.kwargs.get('client_pk')
+            return Contract.objects.filter(client=client)
+        except:
+            logger.error('Something went wrong!')
 
     def perform_create(self, serializer):
-        team = Team.objects.get(user=self.request.user)
-        serializer.save(seller_contact=team)
+        try:
+            team = Team.objects.get(user=self.request.user)
+            serializer.save(seller_contact=team)
+        except:
+            logger.error('Something went wrong!')
 
 
 class EventViewSet(viewsets.ModelViewSet):
@@ -44,28 +54,36 @@ class EventViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = EventFilter
 
-    # on Initialise le serialisateur pour pouvoir mocker extra_kwargs,
-    # et avoir l'instance de l'utilisateur pour savoir son status
+
     def get_serializer(self, *args, **kwargs):
 
-        serializer_class = EventSerializer
-        user = Team.objects.get(user=self.request.user)
-        if user.role == 'MANAGER':
-            serializer_class.Meta.extra_kwargs.clear()
+        try:
+            serializer_class = EventSerializer
+            user = Team.objects.get(user=self.request.user)
+            if user.role == 'MANAGER':
+                serializer_class.Meta.extra_kwargs.clear()
 
-        kwargs['context'] = self.get_serializer_context()
-        return serializer_class(*args, **kwargs)
+            kwargs['context'] = self.get_serializer_context()
+            return serializer_class(*args, **kwargs)
+        except:
+            logger.error('Something went wrong!')
 
 
     def get_queryset(self, *args, **kwargs):
-        client = Client.objects.get(pk=self.kwargs.get('client_pk'))
-        contract = Contract.objects.get(pk=self.kwargs.get('contract_pk'), client=client.id)
-        return self.queryset.filter(contract=contract)
+        try:
+            client = Client.objects.get(pk=self.kwargs.get('client_pk'))
+            contract = Contract.objects.get(pk=self.kwargs.get('contract_pk'), client=client.id)
+            return self.queryset.filter(contract=contract)
+        except:
+            logger.error('Something went wrong!')
 
 
     def perform_create(self, serializer):
-        contract = Contract.objects.get(pk=self.kwargs.get('contract_pk'))
-        serializer.save(contract=contract)
+        try:
+            contract = Contract.objects.get(pk=self.kwargs.get('contract_pk'))
+            serializer.save(contract=contract)
+        except:
+            logger.error('Something went wrong!')
 
 
 

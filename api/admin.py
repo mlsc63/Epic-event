@@ -1,9 +1,11 @@
 from django.contrib import admin
 from .models import Client, Contract, Team, User, Event
 from django.contrib import messages
-from rangefilter.filters import DateRangeFilter, DateTimeRangeFilter
+from rangefilter.filters import DateRangeFilter
 from .function_admin import custom_titled_filter, StatusContract, StatusEvent, RoleUser
+import logging
 
+logger = logging.getLogger(__name__)
 
 admin.site.site_header = "Admin Portal"
 
@@ -82,10 +84,13 @@ class ClientAdmin(admin.ModelAdmin):
     # todo add foreingn key
 
     def save_model(self, request, obj, form, change):
-        team = Team.objects.get(user=request.user)
-        if team.role == 'SELLER':
-            obj.seller_contact = team
-            obj.save()
+        try:
+            team = Team.objects.get(user=request.user)
+            if team.role == 'SELLER':
+                obj.seller_contact = team
+                obj.save()
+        except:
+            logger.error('Something went wrong!')
 
 
 @admin.register(Contract)

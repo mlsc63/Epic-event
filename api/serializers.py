@@ -1,3 +1,5 @@
+from django.contrib.auth.hashers import make_password
+
 from .models import Team, User, Contract, Client, Event
 from rest_framework import serializers, fields
 
@@ -58,6 +60,11 @@ class EventSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    def create(self, validated_data):
+        user = User.objects.create(**validated_data)
+        user.password = make_password(validated_data.get("password"))
+        user.save()
+        return user
 
     class Meta:
         model = User
