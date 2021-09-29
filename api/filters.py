@@ -33,7 +33,7 @@ class ContractFilter(django_filters.FilterSet):
     client = django_filters.CharFilter(lookup_expr='iexact')
     detail_event = django_filters.CharFilter(lookup_expr='iexact')
     amount = django_filters.NumberFilter(lookup_expr='iexact')
-    created_time = django_filters.DateFilter(lookup_expr='iexact')
+    created_time = django_filters.NumberFilter(lookup_expr='year')
     status = django_filters.CharFilter(lookup_expr='iexact')
     seller_contact = django_filters.CharFilter(lookup_expr='iexact')
 
@@ -55,10 +55,10 @@ class EventFilter(django_filters.FilterSet):
     contract = django_filters.CharFilter(lookup_expr='iexact')
     seller_contact = django_filters.CharFilter(lookup_expr='iexact')
     location_event = django_filters.CharFilter(lookup_expr='iexact')
-    date_event = django_filters.CharFilter(lookup_expr='iexact')
+    date_event = django_filters.NumberFilter(lookup_expr='year')
     description = django_filters.CharFilter(lookup_expr='iexact')
     status = django_filters.CharFilter(lookup_expr='iexact')
-    date_created = django_filters.CharFilter(lookup_expr='iexact')
+    date_created = django_filters.NumberFilter(lookup_expr='year')
 
     class Meta:
         order_by_field = 'date_created',
