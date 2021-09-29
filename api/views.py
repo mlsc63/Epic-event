@@ -5,8 +5,11 @@ from .permissions import CreatorClient, CreatorContract, CreatorEvent, CreatorUs
 from .filters import ClientFilter, ContractFilter, EventFilter
 from django_filters import rest_framework as filters
 import logging
+from rest_framework.exceptions import NotFound
 
 logger = logging.getLogger(__name__)
+
+
 
 class ClientViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated & CreatorClient]
@@ -21,7 +24,9 @@ class ClientViewSet(viewsets.ModelViewSet):
             team = Team.objects.get(user=self.request.user)
             serializer.save(seller_contact=team)
         except:
-            logger.error('Something went wrong!')
+            logger.error(str(self.request.data))
+            raise NotFound("Something went wrong")
+
 
 
 class ContractViewSet(viewsets.ModelViewSet):
@@ -37,14 +42,16 @@ class ContractViewSet(viewsets.ModelViewSet):
             client = self.kwargs.get('client_pk')
             return Contract.objects.filter(client=client)
         except:
-            logger.error('Something went wrong!')
+            logger.error(str(self.request.data))
+            raise NotFound("Something went wrong")
 
     def perform_create(self, serializer):
         try:
             team = Team.objects.get(user=self.request.user)
             serializer.save(seller_contact=team)
         except:
-            logger.error('Something went wrong!')
+            logger.error(str(self.request.data))
+            raise NotFound("Something went wrong")
 
 
 class EventViewSet(viewsets.ModelViewSet):
@@ -66,7 +73,8 @@ class EventViewSet(viewsets.ModelViewSet):
             kwargs['context'] = self.get_serializer_context()
             return serializer_class(*args, **kwargs)
         except:
-            logger.error('Something went wrong!')
+            logger.error(str(self.request.data))
+            raise NotFound("Something went wrong")
 
 
     def get_queryset(self, *args, **kwargs):
@@ -75,7 +83,8 @@ class EventViewSet(viewsets.ModelViewSet):
             contract = Contract.objects.get(pk=self.kwargs.get('contract_pk'), client=client.id)
             return self.queryset.filter(contract=contract)
         except:
-            logger.error('Something went wrong!')
+            logger.error(str(self.request.data))
+            raise NotFound("Something went wrong")
 
 
     def perform_create(self, serializer):
@@ -83,7 +92,8 @@ class EventViewSet(viewsets.ModelViewSet):
             contract = Contract.objects.get(pk=self.kwargs.get('contract_pk'))
             serializer.save(contract=contract)
         except:
-            logger.error('Something went wrong!')
+            logger.error(str(self.request.data))
+            raise NotFound("Something went wrong")
 
 
 

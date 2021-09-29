@@ -87,7 +87,7 @@ class ClientAdmin(admin.ModelAdmin):
                 obj.seller_contact = team
                 obj.save()
         except:
-            logger.error('Something went wrong!')
+            logger.error(str(self.request.data))
 
 
 @admin.register(Contract)

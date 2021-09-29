@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 from datetime import timedelta
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -78,11 +79,10 @@ WSGI_APPLICATION = 'EpicEvent.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': '****',
+        'NAME': 'epic',
         'USER': 'postgres',
-        'PASSWORD': '*****',
+        'PASSWORD': 'Mopase63',
         'HOST': '127.0.0.1'
-        
     }
 }
 
@@ -140,4 +140,33 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     "AUTH_HEADER_TYPES": ('Bearer',),
+}
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'file': {
+            'format': '%(levelname)s %(asctime)s %(module)s: %(message)s'
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'debug.log'),
+            'formatter': 'file',
+        },
+        'console': {
+                'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        '': {
+                'handlers': ['file', 'console'],
+                'level': 'ERROR',
+                'propagate': True,
+        },
+    },
 }
